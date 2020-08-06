@@ -1,0 +1,171 @@
+import numpy as np
+from random import randint 
+
+#Choosing Player ship Function
+def player_carrier_coord():
+    print('Input coordinates for carriers (Range = 0-9, Orientation: Horizontal = 0, Vertical = 1)')
+    print('Format: col,row, orientation Eg. 3,1,0')
+    
+    count = 0
+    while count == 0:
+        player_carrier_coord = input('Enter coordinates for carrier: ')
+        player_carrier = player_carrier_coord.split(',')
+       
+        #Error checking for input of coordinates
+        if len(player_carrier) != 3:
+                print('Error entering coordinates')
+                print('Please re-enter coordinates')
+                count = 0
+        elif player_carrier[0].isalnum() != True or player_carrier[1].isalnum()!= True or player_carrier[2].isalnum()!= True:
+            print('Error entering coordinates')
+            print('Please re-enter coordinates')
+            count = 0
+        else:
+            global x,y,z
+            x = int(player_carrier[0])
+            y = int(player_carrier[1])
+            z = int(player_carrier[2])
+            
+            if x + 2 > 9 or y + 2 > 9 or z < 0 or z > 1:
+                print('Out of bounds. Please re-enter coordinates')
+                count = 0
+            elif x < 0 or x > 9 or y < 0 or y > 9:
+                    print('Error entering coordinates')
+                    print('Please re-enter coordinates')
+                    count = 0
+            else:
+                count = 1
+
+
+#Choosing AI ship Funcion
+def AI_carrier_coord():
+    count = 0
+    global a, b, c
+    while count == 0:
+        a = randint(0,9)
+        b = randint(0,9)
+        c = randint(0,1)
+        if (a+2)>9 or (b+2)>9:
+            count = 0
+        else:
+            count = 1
+
+
+#Placement of Player Ship Function
+def player_placement(x,y,z):
+    
+    global player_board
+    if z == 1:
+        for i in range (3):
+            player_board[y+i][x] = 'S'
+    elif z == 0:
+        for i in range (3):
+            player_board[y][x+i] = 'S'
+
+
+#Placement of AI Ship Function
+def AI_placement(a,b,c):
+    global AI_board
+    if c == 1:
+        for i in range(3):
+            AI_board[y+i][x] = 'S'
+    elif c == 0:
+        for i in range(3):
+            AI_board[y][x+i] = 'S'
+
+
+#Player Attack
+def Player_attack():  
+    
+    print('----------------------------')
+    count = 0
+    
+    while count == 0:
+        player_attack = input('Enter the coordinates for attack: ')
+        player_attack = player_attack.split(',')
+        
+        if len(player_attack)!= 2:
+            print('Please re-enter coordinates')
+            count = 0
+        elif player_attack[0].isalnum() != True or player_attack[1].isalnum() != True:
+            print('Please re-enter coordinates')
+            count = 0 
+        else:
+            count = 1
+    
+    global x, y
+    x = int(player_attack[0])
+    y = int(player_attack[1])
+
+
+#AI Attack
+def AI_attack():
+    global a,b
+    a = randint(0,9)
+    b = randint(0,9)
+
+
+
+
+#Entering Coordinates of ship
+player_carrier_coord()
+AI_carrier_coord()
+            
+#Initialize Player Board
+print('\n\n')
+print('Initializing boards...')
+print('\n\n')
+print('Player Board')
+player_board = np.zeros((10,10),int).astype(str)
+
+        
+print(player_board, '\n')
+
+#Initialize AI Board
+print('\n\n')
+print('AI Board')
+AI_board = np.zeros((10,10),int).astype(str)
+print(AI_board)
+
+#Placement of Ships
+player_placement(x, y, z)
+print('\n\n')
+print('Player Board')
+print(player_board, '\n')
+
+AI_placement(a, b, c)
+print('\n\n')
+print('AI Board')
+print(AI_board,'\n')
+
+
+#Main Gameplay
+
+AI_ship = 0
+Player_ship = 0
+
+while Player_ship < 3 and AI_ship < 3:
+    Player_attack()
+    if AI_board[y][x] == 'S':
+        AI_board[y][x] = 'X'
+        AI_ship += 1
+    elif AI_board[y][x] == '0':
+        AI_board[y][x] = 'M'
+    
+    AI_attack()
+    if player_board[b][a] == 'S':
+        player_board[b][a] = 'X'
+        Player_ship += 1
+    elif player_board[b][a] == '0':
+        player_board[b][a] = 'M'
+        
+    print(player_board)
+    print('\n\n')
+    print(AI_board)
+    print('\n\n')
+        
+if AI_ship == 3:
+    print('Player Wins')
+if Player_ship == 3:
+    print('AI Wins ')
+
